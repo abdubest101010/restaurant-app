@@ -4,7 +4,7 @@ interface FetchOptions extends RequestInit {
   token?: string;
 }
 
-export async function api<T>(path: string, options: FetchOptions = {}): Promise<T> {
+export async function api<T = any>(path: string, options: FetchOptions = {}): Promise<T> {
   const { token, headers: customHeaders, ...rest } = options;
 
   const headers: Record<string, string> = {
