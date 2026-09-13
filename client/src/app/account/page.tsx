@@ -21,7 +21,7 @@ export default function AccountPage() {
   }, [loading, user, router]);
 
   useEffect(() => {
-    if (user) orderApi.history().then(setOrders).catch(() => undefined);
+    if (user) orderApi.history().then((data) => setOrders(data as OrderDto[])).catch(() => undefined);
   }, [user]);
 
   if (!user) return null;
