@@ -1,121 +1,125 @@
-# 🍽️ TableBite - Restaurant Platform
+# 🍽️ TableBite - Modern Restaurant Platform
 
-TableBite is a modern, modular, QR-first multi-restaurant ordering and management platform built with **Next.js 15 (Client)**, **NestJS (Server)**, **Prisma ORM**, **PostgreSQL**, **Socket.io (Realtime)**, and **Stripe**.
+A clean, modular, full-stack restaurant platform built with **Next.js 15 (Client)**, **NestJS (Server)**, **Prisma ORM**, **PostgreSQL**, and **Socket.io (Realtime)**.
 
 ---
 
-## 🏛️ Project Architecture & Structure
+## 🏛️ Modern Project Structure
 
-The repository is structured with a clean client-server separation alongside modular shared libraries:
+The project has been restructured into an intuitive **Client / Server / Packages** architecture:
 
 ```text
 Restaurant App/
-├── apps/
-│   ├── web/                     # 💻 Client: Next.js 15 App Router Frontend
-│   │   ├── src/app/             # Pages & Routes (Customer, Staff Dashboard, Admin)
-│   │   ├── src/components/      # Reusable UI & Layout Components
-│   │   ├── src/hooks/           # Custom React Hooks (Cart, Socket, Auth)
-│   │   └── src/lib/             # Frontend Utilities & API Client
-│   │
-│   └── api/                     # ⚙️ Server: NestJS REST API & WebSockets
-│       ├── src/auth/            # Authentication & RBAC Guards
-│       ├── src/orders/          # Order Management & Processing
-│       ├── src/menu/            # Menu Catalog & Modifier Groups
-│       ├── src/restaurants/     # Multi-tenant Restaurant & Branch Management
-│       ├── src/payments/        # Stripe Integration & Webhooks
-│       ├── src/realtime/        # Socket.io Gateways for Live Order Tracking
-│       ├── src/customers/       # Customer Profiles, Addresses, Reviews
-│       ├── src/dashboard/       # Staff Operations & Kitchen Views
-│       └── src/admin/           # Super-Admin Platform Payouts & Approvals
+├── client/                     # 💻 FRONTEND: Next.js 15 (App Router + Tailwind CSS)
+│   ├── src/
+│   │   ├── app/                # Pages & Routes
+│   │   │   ├── (customer)      # QR Ordering, Menu Browsing, Cart & Checkout
+│   │   │   ├── dashboard/      # Restaurant Staff: Kitchen KDS, Tables, Menu Editor
+│   │   │   ├── admin/          # Platform Super-Admin: Approvals & Payouts
+│   │   │   └── account/        # User Account, Addresses, Order History
+│   │   ├── components/         # Reusable UI & Layout Components
+│   │   ├── hooks/              # React Hooks (Cart, Auth, Live Order Tracking)
+│   │   └── lib/                # API Client & Helper Utilities
+│   └── package.json            # @tablebite/client
 │
-├── packages/                    # 📦 Shared Monorepo Packages
-│   ├── db/                      # Prisma Client, Migrations, Seed & PostgreSQL Schema
-│   ├── types/                   # Shared TypeScript Interfaces, DTOs & Contracts
-│   ├── qr/                      # QR Code Generation & Cryptographic Verification
-│   └── realtime/                # Realtime Socket Event Definitions
+├── server/                     # ⚙️ BACKEND: NestJS API & Prisma ORM
+│   ├── prisma/                 # 🐘 PostgreSQL Schema & Seed Scripts
+│   │   ├── schema.prisma       # Prisma Schema (Models & Relations)
+│   │   └── seed.ts             # Database Seed Script (Demo data)
+│   ├── src/
+│   │   ├── auth/               # JWT Auth, Signup, Login & Role Guards
+│   │   ├── orders/             # Order Processing & Workflow
+│   │   ├── menu/               # Catalog, Items, Modifier Groups
+│   │   ├── restaurants/        # Multi-tenant Restaurants & Branches
+│   │   ├── payments/           # Stripe Payments & Cash Checkout
+│   │   ├── realtime/           # Socket.io Gateways for Live Order Updates
+│   │   ├── dashboard/          # Staff Analytics & Operations
+│   │   ├── admin/              # Super-Admin Payouts & Approvals
+│   │   └── prisma/             # Prisma Service Provider
+│   └── package.json            # @tablebite/server
 │
-├── docs/                        # 📚 Operations & Stripe Guides
-├── docker-compose.yml           # Optional Docker Container Config
-├── turbo.json                   # Turborepo Build Pipeline
-├── pnpm-workspace.yaml          # pnpm Monorepo Workspace Configuration
-└── .env.example                 # Environment Variable Template
+├── packages/                   # 📦 SHARED WORKSPACE LIBRARIES
+│   ├── types/                  # Shared TypeScript Interfaces, Enums & DTOs
+│   ├── qr/                     # QR Token Signer & Verification
+│   └── realtime/               # Socket.io Event Contracts
+│
+├── docs/                       # 📚 Operations & Stripe Guides
+├── pnpm-workspace.yaml         # Monorepo Workspace Configuration
+├── turbo.json                  # Turborepo Build Pipeline
+└── .env.example                # Environment Variables Template
 ```
 
 ---
 
 ## 🚀 Tech Stack
 
-- **Client (`apps/web`):** Next.js 15, React 19, Tailwind CSS, Lucide Icons, Stripe Elements, Socket.io-client
-- **Server (`apps/api`):** NestJS, TypeScript, Passport JWT, Socket.io, RxJS, Stripe SDK
-- **Database (`packages/db`):** PostgreSQL with Prisma ORM
-- **Build System:** Turborepo + pnpm Workspaces
+- **Client (`client`):** Next.js 15, React 19, Tailwind CSS, Lucide React, Socket.io-client, Stripe Elements
+- **Server (`server`):** NestJS, TypeScript, Passport JWT, Socket.io, Stripe SDK
+- **Database & ORM (`server/prisma`):** PostgreSQL + Prisma ORM
+- **Shared Packages (`packages/*`):** TypeScript libraries for types, QR logic, and realtime contracts
 
 ---
 
-## 🛠️ Quick Start & Setup
+## ⚙️ How to Setup and Run
 
-### 1. Prerequisites
-- **Node.js:** `>= 20`
-- **pnpm:** `>= 9`
-- **PostgreSQL Database:** Local PostgreSQL or cloud service (e.g. Neon, Supabase, Render, Docker)
-
-### 2. Environment Configuration
-Copy `.env.example` to `.env` and set your PostgreSQL connection string:
-
+### 1. Configure Environment Variables
+Copy `.env.example` to `.env` in the root:
 ```bash
 cp .env.example .env
 ```
-
-Ensure your `DATABASE_URL` is set to your PostgreSQL instance:
+Ensure your `DATABASE_URL` matches your local PostgreSQL credentials:
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/tablebite?schema=public"
 ```
 
-### 3. Install Dependencies & Generate Prisma Client
+### 2. Generate Prisma Client & Sync Database
 ```bash
-pnpm install
+# 1. Generate Prisma Client
 pnpm db:generate
-```
 
-### 4. Push Schema & Seed Database
-```bash
-# Push schema tables to your PostgreSQL database:
+# 2. Push schema to PostgreSQL (creates tables)
 pnpm db:push
 
-# Seed demo restaurants, menus, tables, and roles:
+# 3. Seed demo data (admin, restaurant owner, sample menus, tables)
 pnpm db:seed
 ```
 
-### 5. Start Development Servers
+### 3. Start Development Mode
 ```bash
 pnpm dev
 ```
-
-- **Client (Web App):** [http://localhost:3000](http://localhost:3000)
-- **Server (API):** [http://localhost:4000/api](http://localhost:4000/api)
-- **API Health Check:** [http://localhost:4000/api/health](http://localhost:4000/api/health)
-- **Demo Menu:** [http://localhost:3000/menu/main](http://localhost:3000/menu/main)
+- **Client (Frontend):** [http://localhost:3000](http://localhost:3000)
+- **Server (Backend API):** [http://localhost:4000/api](http://localhost:4000/api)
+- **Prisma Studio (Web DB Viewer):** `pnpm db:studio`
 
 ---
 
-## 👥 Demo User Accounts
+## 🔍 How to Check If Everything Is Working
 
-| Role | Email | Password | Access / Features |
-|------|-------|----------|-------------------|
-| **Platform Admin** | `admin@tablebite.com` | `admin123` | Approvals, platform payouts, audit logs (`/admin`) |
-| **Restaurant Owner** | `owner@demobistro.com` | `owner123` | Menu editor, branch analytics, staff roles (`/dashboard`) |
-| **Kitchen Staff** | `kitchen@demobistro.com` | `kitchen123` | Live Kitchen Display System (KDS) (`/dashboard/kitchen`) |
-| **Waiter** | `waiter@demobistro.com` | `waiter123` | Table status & live order serving (`/dashboard/tables`) |
-| **Customer** | `guest@example.com` | `guest123` | QR ordering, live order tracker, reviews, favorites |
+### 1. Check API & Database Health
+Visit **[http://localhost:4000/api/health](http://localhost:4000/api/health)** in your browser:
+```json
+{ "status": "ok", "timestamp": "2026-09-13T..." }
+```
 
----
+### 2. Check Database Tables (Prisma Studio)
+Run:
+```bash
+pnpm db:studio
+```
+Open **http://localhost:5555** in your browser to inspect all PostgreSQL tables (`restaurants`, `branches`, `menu_items`, `users`, `orders`).
 
-## 📜 Available NPM Scripts
+### 3. Check Demo Login Accounts
+Test logging in at **[http://localhost:3000/login](http://localhost:3000/login)**:
 
-- `pnpm dev` - Start both client and server concurrently with live reload
-- `pnpm build` - Build all packages, client, and server for production
-- `pnpm db:generate` - Generate Prisma Client from schema
-- `pnpm db:push` - Synchronize Prisma schema with PostgreSQL
-- `pnpm db:seed` - Seed initial demo data into PostgreSQL
-- `pnpm db:studio` - Open Prisma Studio web visualizer
-- `pnpm lint` - Run ESLint across all apps and packages
+| Role | Email | Password | What to Verify |
+|------|-------|----------|----------------|
+| **Platform Admin** | `admin@tablebite.com` | `admin123` | Access Super Admin at `/admin` |
+| **Restaurant Owner** | `owner@demobistro.com` | `owner123` | Access Owner Dashboard at `/dashboard` |
+| **Kitchen Staff** | `kitchen@demobistro.com` | `kitchen123` | Access Live KDS at `/dashboard/kitchen` |
+| **Waiter** | `waiter@demobistro.com` | `waiter123` | Access Table View at `/dashboard/tables` |
+| **Customer** | `guest@example.com` | `guest123` | Access Customer Portal at `/account` |
+
+### 4. Check QR Ordering & Customer Menu
+Visit the demo restaurant menu at **[http://localhost:3000/menu/main](http://localhost:3000/menu/main)** to test browsing, adding items to cart, and placing orders.
+

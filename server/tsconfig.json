@@ -18,10 +18,9 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@tablebite/db": ["../../packages/db/src"],
-      "@tablebite/types": ["../../packages/types/src"],
-      "@tablebite/qr": ["../../packages/qr/src"],
-      "@tablebite/realtime": ["../../packages/realtime/src"]
+      "@tablebite/types": ["../packages/types/src"],
+      "@tablebite/qr": ["../packages/qr/src"],
+      "@tablebite/realtime": ["../packages/realtime/src"]
     }
   },
   "include": ["src/**/*"]
