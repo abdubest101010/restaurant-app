@@ -11,7 +11,7 @@ export default function FavoritesPage() {
   const [items, setItems] = useState<Array<Record<string, unknown>>>([]);
 
   useEffect(() => {
-    customerApi.favorites().then(setItems).catch(() => undefined);
+    customerApi.favorites().then((data) => setItems(data as Array<Record<string, unknown>>)).catch(() => undefined);
   }, []);
 
   return (
