@@ -1,17 +1,21 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/lib/auth';
 import { orderApi, paymentApi } from '@/lib/api';
 import { formatPrice } from '@/lib/utils';
+import { Lock, LogIn, ArrowRight } from 'lucide-react';
 
 function CheckoutForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const existingOrderId = searchParams.get('reorder');
+  const { user, loading: authLoading } = useAuth();
   const { items, branchId, tableId, total, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash'>('cash');
   const [orderType, setOrderType] = useState<'dine_in' | 'pickup'>(tableId ? 'dine_in' : 'pickup');
@@ -114,9 +118,45 @@ function CheckoutForm() {
             </div>
           </label>
         </div>
-        <Button onClick={handleCheckout} disabled={loading || (!existingOrderId && items.length === 0)} className="w-full" size="lg">
-          {loading ? 'Processing...' : `Place Order — ${formatPrice(grandTotal)}`}
-        </Button>
+        {!user && !authLoading && (
+          <div className="mb-6 rounded-2xl border-2 border-primary-100 bg-gradient-to-r from-orange-50 to-amber-50 p-5 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="rounded-xl bg-primary-500 p-2.5 text-white shadow-md">
+                <Lock className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-gray-900">Sign in to complete your order</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  You can browse all items freely! To submit and track your order in real time, please log in or create a quick account.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Link href="/login" className="flex-1 min-w-[120px]">
+                    <Button className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700">
+                      <LogIn className="h-4 w-4" /> Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/signup" className="flex-1 min-w-[120px]">
+                    <Button variant="outline" className="w-full border-primary-300 text-primary-700 hover:bg-primary-100">
+                      Create Account
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {user ? (
+          <Button onClick={handleCheckout} disabled={loading || (!existingOrderId && items.length === 0)} className="w-full h-12 text-base font-semibold shadow-lg shadow-orange-500/20" size="lg">
+            {loading ? 'Processing...' : `Place Order — ${formatPrice(grandTotal)}`}
+          </Button>
+        ) : (
+          <Link href="/login" className="block">
+            <Button className="w-full h-12 text-base font-semibold flex items-center justify-center gap-2" size="lg">
+              Sign In to Place Order <ArrowRight className="h-5 w-5" />
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   );
