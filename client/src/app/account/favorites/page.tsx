@@ -31,7 +31,7 @@ export default function FavoritesPage() {
                 </div>
                 <div className="flex gap-2">
                   <Link href={`/menu/main/item/${item.id}`}><Button size="sm">View</Button></Link>
-                  <Button size="sm" variant="outline" onClick={() => customerApi.toggleFavorite(item.id).then(() => customerApi.favorites().then(setItems))}>
+                  <Button size="sm" variant="outline" onClick={() => customerApi.toggleFavorite(item.id).then(() => customerApi.favorites().then((data) => setItems(data as Array<Record<string, unknown>>)))}>
                     Remove
                   </Button>
                 </div>
