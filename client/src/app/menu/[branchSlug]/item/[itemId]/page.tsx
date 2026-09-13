@@ -44,6 +44,7 @@ export default function ItemDetailPage() {
   }
 
   function handleAddToCart() {
+    if (!item) return;
     const modifierOptionIds: string[] = [];
     const modifierNames: string[] = [];
     const modifierPrices: number[] = [];
