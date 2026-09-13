@@ -33,6 +33,7 @@ export default function ItemDetailPage() {
   }
 
   function getTotalPrice() {
+    if (!item) return 0;
     let total = item.basePrice;
     for (const group of item.modifierGroups || []) {
       const selectedId = selectedModifiers[group.id];
