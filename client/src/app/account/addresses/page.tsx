@@ -10,7 +10,7 @@ export default function AddressesPage() {
   const [addresses, setAddresses] = useState<Array<Record<string, string>>>([]);
   const [form, setForm] = useState({ label: 'Home', street: '', city: '', state: '', zip: '' });
 
-  const load = () => customerApi.addresses().then(setAddresses);
+  const load = () => customerApi.addresses().then((data) => setAddresses(data as Array<Record<string, string>>));
   useEffect(() => { load(); }, []);
 
   async function save(e: React.FormEvent) {
