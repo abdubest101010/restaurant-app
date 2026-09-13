@@ -1,0 +1,17 @@
+{
+  "name": "TableBite",
+  "short_name": "TableBite",
+  "description": "Scan, order, pay, and track your meal in real time.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
